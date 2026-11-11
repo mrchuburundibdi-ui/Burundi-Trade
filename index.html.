@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BURUNDI TRADE</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#081525;
+ color:white;
+}
+header{
+ background:#102b40;
+ padding:22px;
+ text-align:center;
+ border-bottom:3px solid #20c879;
+}
+header h1{color:#20c879;margin:0}
+header p{color:#ddd}
+.container{padding:18px;max-width:700px;margin:auto}
+.card{
+ background:#142a40;
+ padding:18px;
+ border-radius:14px;
+ margin-bottom:16px;
+}
+.balance{font-size:32px;color:#20c879;font-weight:bold}
+input,select{
+ width:100%;
+ padding:13px;
+ margin:8px 0;
+ border:0;
+ border-radius:8px;
+}
+button{
+ border:0;
+ padding:13px;
+ border-radius:8px;
+ cursor:pointer;
+ font-weight:bold;
+}
+.green{background:#20c879;color:#071525}
+.red{background:#ed5252;color:white}
+.blue{background:#2879d0;color:white}
+.actions{display:flex;gap:10px}
+.actions button{flex:1}
+.asset{
+ display:flex;
+ justify-content:space-between;
+ padding:14px 5px;
+ border-bottom:1px solid #345;
+}
+.small{color:#aebdca;font-size:13px}
+.hidden{display:none}
+footer{text-align:center;padding:25px;color:#aebdca}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🇧🇮 BURUNDI TRADE</h1>
+<p>Trade Smart • Learn • Practice</p>
+<p>Founder: MR'CHUBURUNDI</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<select id="language" onchange="changeLanguage()">
+<option value="sw">Kiswahili</option>
+<option value="fr">Français</option>
+<option value="en">English</option>
+</select>
+</div>
+
+<div class="card" id="login">
+<h2 id="welcome">Karibu BURUNDI TRADE</h2>
+<input id="username" placeholder="Jina lako">
+<button class="green" onclick="loginUser()" id="enter">
+Fungua akaunti ya majaribio
+</button>
+<p class="small">
+Akaunti hii ni ya majaribio tu. Hakuna pesa halisi.
+</p>
+</div>
+
+<div id="dashboard" class="hidden">
+
+<div class="card">
+<h3 id="hello">Karibu!</h3>
+<p class="small">DEMO WALLET</p>
+<div class="balance" id="balance">$1,000.00</div>
+<p class="small">Virtual money - Not real money</p>
+</div>
+
+<div class="card">
+<h3 id="markets">Masoko ya majaribio</h3>
+<div id="assets"></div>
+</div>
+
+<div class="card">
+<h3 id="tradeTitle">BUY / SELL</h3>
+
+<select id="asset">
+<option value="EUR/USD">EUR/USD</option>
+<option value="BTC/USD">BTC/USD</option>
+<option value="GOLD">GOLD</option>
+</select>
+
+<input id="amount" type="number"
+placeholder="Kiasi cha majaribio ($)"
+min="1">
+
+<div class="actions">
+<button class="green" onclick="trade('BUY')">BUY</button>
+<button class="red" onclick="trade('SELL')">SELL</button>
+</div>
+
+<p class="small" id="message">
+Trading ya majaribio pekee.
+</p>
+</div>
+
+<div class="card">
+<h3 id="historyTitle">Historia ya biashara</h3>
+<div id="history">Hakuna biashara bado.</div>
+</div>
+
+<button class="blue" onclick="logout()">Logout</button>
+
+</div>
+</div>
+
+<footer>
+BURUNDI TRADE © 2026<br>
+Created by MR'CHUBURUNDI<br>
+DEMO PLATFORM — NO REAL MONEY
+</footer>
+
+<script>
+let money=1000;
+
+const prices={
+"EUR/USD":1.16,
+"BTC/USD":95000,
+"GOLD":4000
+};
+
+let history=[];
+
+const words={
+sw:{
+welcome:"Karibu BURUNDI TRADE",
+enter:"Fungua akaunti ya majaribio",
+markets:"Masoko ya majaribio",
+trade:"Nunua au Uza",
+history:"Historia ya biashara",
+hello:"Karibu",
+amount:"Kiasi cha majaribio ($)",
+success:"Biashara ya majaribio imefanyika!",
+low:"Salio lako la majaribio halitoshi.",
+empty:"Hakuna biashara bado."
+},
+fr:{
+welcome:"Bienvenue sur BURUNDI TRADE",
+enter:"Créer un compte démo",
+markets:"Marchés de démonstration",
+trade:"Acheter ou Vendre",
+history:"Historique des transactions",
+hello:"Bienvenue",
+amount:"Montant virtuel ($)",
+success:"Transaction de démonstration effectuée!",
+low:"Solde virtuel insuffisant.",
+empty:"Aucune transaction."
+},
+en:{
+welcome:"Welcome to BURUNDI TRADE",
+enter:"Create demo account",
+markets:"Demo Markets",
+trade:"Buy or Sell",
+history:"Trading History",
+hello:"Welcome",
+amount:"Demo amount ($)",
+success:"Demo trade completed!",
+low:"Insufficient demo balance.",
+empty:"No trades yet."
+}
+};
+
+function changeLanguage(){
+let lang=document.getElementById("language").value;
+let w=words[lang];
+
+document.getElementById("welcome").innerText=w.welcome;
+document.getElementById("enter").innerText=w.enter;
+document.getElementById("markets").innerText=w.markets;
+document.getElementById("tradeTitle").innerText=w.trade;
+document.getElementById("historyTitle").innerText=w.history;
+document.getElementById("amount").placeholder=w.amount;
+document.getElementById("hello").innerText=w.hello;
+}
+
+function loginUser(){
+let name=document.getElementById("username").value.trim();
+
+if(!name){
+alert("Andika jina lako !");
+return;
+}
+
+document.getElementById("login").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+document.getElementById("hello").innerText="Karibu, "+name;
+showAssets();
+}
+
+function showAssets(){
+let box=document.getElementById("assets");
+box.innerHTML="";
+
+for(let name in prices){
+let div=document.createElement("div");
+div.className="asset";
+div.innerHTML="<span>"+name+"</span><b>$"+
+prices[name].toLocaleString()+"</b>";
+box.appendChild(div);
+}
+}
+
+function trade(type){
+let amount=Number(document.getElementById("amount").value);
+let asset=document.getElementById("asset").value;
+
+if(!Number.isFinite(amount)||amount<=0){
+alert("Weka kiasi sahihi.");
+return;
+}
+
+if(amount>money){
+let lang=document.getElementById("language").value;
+alert(words[lang].low);
+return;
+}
+
+money-=amount;
+
+history.unshift({
+type:type,
+asset:asset,
+amount:amount,
+time:new Date().toLocaleTimeString()
+});
+
+document.getElementById("balance").innerText=
+"$"+money.toFixed(2);
+
+let box=document.getElementById("history");
+box.innerHTML="";
+
+history.forEach(item=>{
+let div=document.createElement("p");
+div.innerText=item.type+" "+item.asset+
+" | $"+item.amount+" | "+item.time;
+box.appendChild(div);
+});
+
+document.getElementById("message").innerText=
+words[document.getElementById("language").value].success;
+
+document.getElementById("amount").value="";
+}
+
+function logout(){
+document.getElementById("dashboard").classList.add("hidden");
+document.getElementById("login").classList.remove("hidden");
+}
+
+showAssets();
+</script>
+
+</body>
+  </kwanzaa
